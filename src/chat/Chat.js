@@ -5,11 +5,6 @@ const socket = new WebSocket('wss://signal.jeeva.dev');
 const configuration = {'iceServers': [{'urls': 'stun:coturn.jeeva.dev:3478', username: 'webapp', credential: 'freepass'}]};
 let peerConnection = new RTCPeerConnection(configuration);
 
-// Connection opened
-socket.addEventListener('open', function (event) {
-  console.log('socket connected');
-});
-
 function Chat() {
   const videoRef = useRef();
   const remoteVideoRef = useRef();
@@ -41,26 +36,31 @@ function Chat() {
     }
   };
 
+  socket.addEventListener('message', async ({data}) => {
+    const message = JSON.parse(data);
+    console.log(message);
+    if (message.answer) {
+          const remoteDesc = new RTCSessionDescription(message.answer);
+          await peerConnection.setRemoteDescription(remoteDesc);
+          console.log('Jeeva is online');
+      }
+
+    if (message.iceCandidate) {
+      try {
+          await peerConnection.addIceCandidate(message.iceCandidate);
+      } catch (e) {
+          console.error('Error adding received ice candidate', e);
+      }
+    }
+
+    if(message.status === 'online') {
+      setStatus('Jeeva is online');
+    }
+  });
+
   const makeCall = async function() {
       await startVideo();
       setStatus('connecting');
-      socket.addEventListener('message', async ({data}) => {
-        const message = JSON.parse(data);
-        console.log(message);
-        if (message.answer) {
-              const remoteDesc = new RTCSessionDescription(message.answer);
-              await peerConnection.setRemoteDescription(remoteDesc);
-          }
-
-        if (message.iceCandidate) {
-          try {
-              await peerConnection.addIceCandidate(message.iceCandidate);
-          } catch (e) {
-              console.error('Error adding received ice candidate', e);
-          }
-        }
-      });
-
       peerConnection.addEventListener('icecandidate', async (event) => {
         console.log(event);
         if (event.candidate) {
@@ -90,10 +90,15 @@ function Chat() {
     peerConnection = new RTCPeerConnection(configuration);
   };
 
+  const pingJeeva = () => {
+    fetch('https://signal.jeeva.dev/connect');
+  };
+
   return (
     <div className="App">
       <h3>Connect with me</h3>
-      {status === '' && <button onClick={makeCall}>Call</button>}
+      {status === 'Jeeva is online' && <button onClick={makeCall}>Call</button>}
+      {status === '' && <button onClick={pingJeeva}>Connect</button>}
       <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline autoPlay></video>
       <video ref={videoRef} className={(status === 'connecting' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
       {status !== '' && <p>Status - {status}</p> }

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './Chat.css';
+const messaging = window.firebase.messaging();
 
 const socket = new WebSocket('wss://signal.jeeva.dev');
 const configuration = {'iceServers': [{'urls': 'stun:coturn.jeeva.dev:3478', username: 'webapp', credential: 'freepass'}]};
@@ -7,7 +8,7 @@ let peerConnection = new RTCPeerConnection(configuration);
 
 // Connection opened
 socket.addEventListener('open', function (event) {
-  console.log('socket connected');
+  console.log('socket open');
 });
 
 function Receiver() {
@@ -29,6 +30,35 @@ function Receiver() {
       remoteVideoRef.current.srcObject = remoteVideoStream;
     }
   }, [remoteVideoStream] );
+
+  useEffect(() => {
+    // Get registration token. Initially this makes a network call, once retrieved
+    // subsequent calls to getToken will return from cache.
+    messaging.getToken({vapidKey: 'BJWAxinpUXb487t6NHrnt2KkGEGY-vXsHxu7s9p8EH3mhhufu2cBc18QQrAQNABZoGt6BwRn4e4SfPkHGC1F9BE'}).then(async (currentToken) => {
+      if (currentToken) {
+        // sendTokenToServer(currentToken);
+        const res = await fetch('https://connect.jeeva.dev/register', {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          mode: 'cors',
+          body: JSON.stringify({token: currentToken})
+        });
+        console.log(res);
+      } else {
+        console.log('No registration token available. Request permission to generate one.');
+      }
+    }).catch((err) => {
+      console.log('An error occurred while retrieving token. ', err);
+    });
+
+    messaging.onMessage((payload) => {
+      console.log('Message received. ', payload);
+    });
+
+    makeCall();
+  }, []);
 
   const startVideo = async () => {
     try {
@@ -82,6 +112,8 @@ function Receiver() {
             videoStream.getTracks().forEach(track => peerConnection.addTrack(track, videoStream));
         }
       };
+
+      socket.send(JSON.stringify({status: 'online'}));
   };
 
   const hangUp = () => {
@@ -92,7 +124,7 @@ function Receiver() {
   return (
     <div className="App">
       <h3>Chat with client</h3>
-      {status === '' && <button onClick={makeCall}>Call</button>}
+      {/* {status === '' && <button onClick={makeCall}>Call</button>} */}
       <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline autoPlay></video>
       <video ref={videoRef} className={(status === 'connecting' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
       {status !== '' && <p>Status - {status}</p> }
