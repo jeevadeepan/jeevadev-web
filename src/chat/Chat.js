@@ -91,7 +91,7 @@ function Chat() {
   };
 
   const pingJeeva = () => {
-    fetch('https://signal.jeeva.dev/connect');
+    fetch('https://connect.jeeva.dev/connect');
   };
 
   return (
