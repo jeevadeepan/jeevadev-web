@@ -53,14 +53,14 @@ function Chat() {
       }
     }
 
-    if(message.status === 'online') {
-      setStatus('Jeeva is online');
+    if(message.status === 'online' && status === 'calling') {
+      setStatus('Connecting...');
+      makeCall();
     }
   });
 
   const makeCall = async function() {
-      await startVideo();
-      setStatus('connecting');
+      // setStatus('connecting');
       peerConnection.addEventListener('icecandidate', async (event) => {
         console.log(event);
         if (event.candidate) {
@@ -88,19 +88,23 @@ function Chat() {
   const hangUp = () => {
     peerConnection.close();
     peerConnection = new RTCPeerConnection(configuration);
+    setStatus('');
+    videoStream.getTracks().forEach(track => track.stop());
   };
 
-  const pingJeeva = () => {
+  const pingJeeva = async () => {
+    setStatus('calling');
+    await startVideo();
     fetch('https://connect.jeeva.dev/connect');
   };
 
   return (
     <div className="App">
       <h3>Connect with me</h3>
-      {status === 'Jeeva is online' && <button onClick={makeCall}>Call</button>}
-      {status === '' && <button onClick={pingJeeva}>Connect</button>}
+      {/* {status === 'Jeeva is online' && <button onClick={makeCall}>Call</button>} */}
+      {status === '' && <button onClick={pingJeeva}>Call</button>}
       <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline autoPlay></video>
-      <video ref={videoRef} className={(status === 'connecting' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
+      <video ref={videoRef} className={(status === 'calling' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
       {status !== '' && <p>Status - {status}</p> }
       {status === 'connected' && <button onClick={hangUp}>Hangup</button>}
     </div>
