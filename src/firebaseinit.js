@@ -1,5 +1,5 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyAGOCt6xacdN2B_c4G4SmfaZTPBoK8_C2w",
+    apiKey: "test",
     authDomain: "fleet-radar-299112.firebaseapp.com",
     projectId: "fleet-radar-299112",
     storageBucket: "fleet-radar-299112.appspot.com",
