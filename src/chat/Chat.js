@@ -99,14 +99,15 @@ function Chat() {
   };
 
   return (
-    <div className="App">
-      <h3>Connect with me</h3>
+    <div className="AppContainer">
       {/* {status === 'Jeeva is online' && <button onClick={makeCall}>Call</button>} */}
-      {status === '' && <button onClick={pingJeeva}>Call</button>}
-      <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline autoPlay></video>
+      {status === '' && <a href="#" onClick={pingJeeva} className="sec-font btn theme-btn">Let's Connect <span className="lnr lnr-camera-video"></span></a>}
+      <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={300} playsInline autoPlay></video>
       <video ref={videoRef} className={(status === 'calling' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
+      <div className='toolbar'>
       {status !== '' && <p>Status - {status}</p> }
-      {status === 'connected' && <button onClick={hangUp}>Hangup</button>}
+      {status === 'connected' && <button className='btn theme-btn hangup' onClick={hangUp}>Hangup</button>}
+      </div>
     </div>
   );
 }

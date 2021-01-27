@@ -15,7 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "gsutil rsync -R ./build gs://jeeva.dev",
+    "postbuild": "gsutil rsync -R ./build gs://jeeva.dev && gsutil setmeta -h \"Cache-Control:no-store, max-age=0\" gs://jeeva.dev/index.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

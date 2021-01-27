@@ -12,10 +12,7 @@ function App() {
         </Route>
         <Route path="/">
           <div className="App">
-            <header className="App-header">
-              Hi! This is Jeevadeepan Amuthurajan!
-              <Chat></Chat>
-            </header>
+            <Chat></Chat>
           </div>
         </Route>
       </Switch>

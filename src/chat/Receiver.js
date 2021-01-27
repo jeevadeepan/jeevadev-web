@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import './Chat.css';
-const messaging = window.firebase.messaging();
 
 const socket = new WebSocket('wss://signal.jeeva.dev');
 const configuration = {'iceServers': [{'urls': 'stun:coturn.jeeva.dev:3478', username: 'webapp', credential: 'freepass'}]};
@@ -25,13 +24,26 @@ function Receiver() {
     }
   }, [videoStream] );
 
-  useEffect(() => {
-    if(remoteVideoStream) {
-      remoteVideoRef.current.srcObject = remoteVideoStream;
-    }
-  }, [remoteVideoStream] );
+  // useEffect(() => {
+  //   if(remoteVideoStream) {
+  //     remoteVideoRef.current.srcObject = remoteVideoStream;
+  //   }
+  // }, [remoteVideoStream] );
 
   useEffect(() => {
+    const firebaseConfig = {
+      apiKey: "key",
+      authDomain: "fleet-radar-299112.firebaseapp.com",
+      projectId: "fleet-radar-299112",
+      storageBucket: "fleet-radar-299112.appspot.com",
+      messagingSenderId: "895377398415",
+      appId: "1:895377398415:web:0edb13bc5d138b98b3aefa"
+    };
+    
+    // Initialize Firebase
+    window.firebase.initializeApp(firebaseConfig);
+    const messaging = window.firebase.messaging();
+    messaging.getToken({vapidKey: "BJWAxinpUXb487t6NHrnt2KkGEGY-vXsHxu7s9p8EH3mhhufu2cBc18QQrAQNABZoGt6BwRn4e4SfPkHGC1F9BE"});
     // Get registration token. Initially this makes a network call, once retrieved
     // subsequent calls to getToken will return from cache.
     messaging.getToken({vapidKey: 'BJWAxinpUXb487t6NHrnt2KkGEGY-vXsHxu7s9p8EH3mhhufu2cBc18QQrAQNABZoGt6BwRn4e4SfPkHGC1F9BE'}).then(async (currentToken) => {
@@ -121,14 +133,21 @@ function Receiver() {
     peerConnection = new RTCPeerConnection(configuration);
   };
 
+  const srvs = () => {
+    if(remoteVideoStream) {
+      remoteVideoRef.current.srcObject = remoteVideoStream;
+    }
+  };
+
   return (
     <div className="App">
       <h3>Chat with client</h3>
       {/* {status === '' && <button onClick={makeCall}>Call</button>} */}
-      <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline autoPlay></video>
+      <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline controls></video>
       <video ref={videoRef} className={(status === 'connecting' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
       {status !== '' && <p>Status - {status}</p> }
       {status === 'connected' && <button onClick={hangUp}>Hangup</button>}
+      <button onClick={srvs()}>Answer</button>
     </div>
   );
 }
