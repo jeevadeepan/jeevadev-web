@@ -143,7 +143,7 @@ function Receiver() {
     <div className="App">
       <h3>Chat with client</h3>
       {/* {status === '' && <button onClick={makeCall}>Call</button>} */}
-      <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline controls></video>
+      <video ref={remoteVideoRef} className={status === 'connected' ? '' : 'hidden'} width={500} height={500} playsInline autoPlay></video>
       <video ref={videoRef} className={(status === 'connecting' || status === 'connected') ? '': 'hidden'} width={200} height={200} playsInline autoPlay muted></video>
       {status !== '' && <p>Status - {status}</p> }
       {status === 'connected' && <button onClick={hangUp}>Hangup</button>}

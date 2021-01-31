@@ -25,3 +25,4 @@ yarn-error.log*
 public/firebase-messaging-sw.js
 src/firebaseinit.js
 .eslintcache
+key.txt

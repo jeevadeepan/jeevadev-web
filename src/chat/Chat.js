@@ -36,28 +36,30 @@ function Chat() {
     }
   };
 
-  socket.addEventListener('message', async ({data}) => {
-    const message = JSON.parse(data);
-    console.log(message);
-    if (message.answer) {
-          const remoteDesc = new RTCSessionDescription(message.answer);
-          await peerConnection.setRemoteDescription(remoteDesc);
-          console.log('Jeeva is online');
+  useEffect(() => {
+    socket.addEventListener('message', async ({data}) => {
+      const message = JSON.parse(data);
+      console.log(message);
+      if (message.answer) {
+            const remoteDesc = new RTCSessionDescription(message.answer);
+            await peerConnection.setRemoteDescription(remoteDesc);
+            console.log('Jeeva is online');
+        }
+  
+      if (message.iceCandidate) {
+        try {
+            await peerConnection.addIceCandidate(message.iceCandidate);
+        } catch (e) {
+            console.error('Error adding received ice candidate', e);
+        }
       }
-
-    if (message.iceCandidate) {
-      try {
-          await peerConnection.addIceCandidate(message.iceCandidate);
-      } catch (e) {
-          console.error('Error adding received ice candidate', e);
+  
+      if(message.status === 'online' && status === 'calling') {
+        setStatus('Connecting...');
+        makeCall();
       }
-    }
-
-    if(message.status === 'online' && status === 'calling') {
-      setStatus('Connecting...');
-      makeCall();
-    }
-  });
+    });
+  }, [status]);
 
   const makeCall = async function() {
       // setStatus('connecting');

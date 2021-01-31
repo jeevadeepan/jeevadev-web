@@ -306,6 +306,7 @@ span.menu-item-name:before {
     color: #fff;
     line-height: 60px;
     margin-bottom: 25px;
+    text-align: left;
 }
 
 .hero-section h4 {
@@ -318,6 +319,17 @@ span.menu-item-name:before {
     letter-spacing: 6px;
     font-weight: 600;
     margin: 0;
+}
+.hero-section .photo-attribution {
+    position: absolute;
+    bottom: 0;
+    right: 1rem;
+    color: #ffffff;
+    font-size: 0.8rem;
+}
+.hero-section .photo-attribution a{
+    text-decoration: underline;
+    color: #b3b2b2
 }
 .block {
     overflow: hidden;

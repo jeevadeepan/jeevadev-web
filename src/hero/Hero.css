@@ -1,0 +1,14 @@
+.section-hero-content p{
+    margin-bottom: 0;
+    font-size: 48px;
+    color: #fff;
+    line-height: inherit;
+}
+
+@media (max-width:768px) {
+    .section-hero-content p{
+        margin-bottom: 0;
+        font-size: 26px;
+        line-height: inherit;
+    }
+}

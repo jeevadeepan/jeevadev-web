@@ -1,7 +1,7 @@
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
-import Chat from './chat/Chat';
 import Receiver from './chat/Receiver';
+import Hero from './hero/Hero';
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         </Route>
         <Route path="/">
           <div className="App">
-            <Chat></Chat>
+            <Hero />
           </div>
         </Route>
       </Switch>
