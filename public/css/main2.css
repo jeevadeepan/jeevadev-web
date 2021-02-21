@@ -768,22 +768,19 @@ section.services {
     position: relative;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 .project-box {
     overflow: hidden;
     margin: 0px 15px;
+    position: relative;
+}
+
+.project-box .project-card-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .item.slick-slide {outline: none;}
